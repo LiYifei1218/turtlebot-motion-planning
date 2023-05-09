@@ -9,12 +9,12 @@ The project will involve the following steps:
   - [x]  Hardware assembley
   - [x]  Software environment setup
 
-- [x] 2) implementing existing robot planning and control algorithms (e.g., Rapidly-exploring Random Tree (RRT));
-  - [x] implemented RRT Star
+- [x] 2) Implementing existing robot planning and control algorithms (e.g., Rapidly-exploring Random Tree (RRT));
+  - [x] Implemented RRT Star algorithm with captured map from SLAM
 
-- [x] 3) mapping environments using existing algorithms (e.g., occupancy grid mapping)
-  - [x] mapped simulation environment using built in SLAM
+- [x] 3) Mapping environments using existing algorithms (e.g., occupancy grid mapping)
+  - [x] Mapped simulation environment using built in SLAM
 
-- [x] 4) testing the autonomy capabilities of the robot in navigation tasks.
-  - [x] tested in simulation evvironment
-  - [ ] not yet tested in realworld environment yet
+- [x] 4) Testing the autonomy capabilities of the robot in navigation tasks.
+  - [x] Tested in simulation evvironment
+  - [ ] Not yet tested in realworld environment
