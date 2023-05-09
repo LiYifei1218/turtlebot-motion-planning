@@ -10,6 +10,13 @@ class Util:
     @staticmethod
     def angle(n1, n2):
         return math.atan2(n2.pos[1] - n1.pos[1], n2.pos[0] - n1.pos[0])
+    
+    @staticmethod
+    def convert_to_real_coord(pos):
+        origin = (-18, -10)
+        resolution = 0.05
+        # return real world coordinate in meters
+        return (pos[0] * resolution + origin[0], pos[1] * resolution + origin[1])
 
 
 class Node:
@@ -77,9 +84,9 @@ class RRTStar:
 
     def random_position(self):
         # generate a random position within the map
-        # return Node((np.random.uniform(0, self.map.shape[0]), np.random.uniform(0, self.map.shape[1])))
+        return Node((np.random.uniform(0, self.map.shape[0]), np.random.uniform(0, self.map.shape[1])))
         # generate a random position within rectangle of start and goal
-        return  Node((np.random.uniform(min(self.startpos[0], self.endpos[0]), max(self.startpos[0], self.endpos[0])), np.random.uniform(min(self.startpos[1], self.endpos[1]), max(self.startpos[1], self.endpos[1]))))
+        # return Node((np.random.uniform(min(self.startpos[0], self.endpos[0]), max(self.startpos[0], self.endpos[0])), np.random.uniform(min(self.startpos[1], self.endpos[1]), max(self.startpos[1], self.endpos[1]))))
     
     
     def nearest(self, node):
@@ -134,7 +141,15 @@ class RRTStar:
                 best_parent = neighbor
         # rewire the graph
         self.G.rewire(new_node, best_parent)
-        print('rewire')        
+        print('rewire')
+
+    def update_neighbors(self, new_node):
+        # rewire the graph to help reduce the cost of the neighbors
+        neighbors = self.G.nodes_within_radius(new_node, self.neighbor_radius)
+        for neighbor in neighbors:
+            if Util.dist(new_node, neighbor) + new_node.cost < neighbor.cost:
+                self.G.rewire(neighbor, new_node)
+                print('update_neighbors') 
 
     def backtarce(self, node):
         # backtrace the path from the goal to the start
@@ -175,7 +190,7 @@ if __name__ == '__main__':
     plt.imshow(raster, cmap='gray')
 
 
-    planning = RRTStar((170,213), (209,146), raster, 5000, step_size=2, neighbor_radius=5, goal_radius=2, collision_radius=3)
+    planning = RRTStar((170,213), (209,146), raster, 50000, step_size=5, neighbor_radius=10, goal_radius=3, collision_radius=3)
 
     # draw the start and goal locations
     plt.plot(planning.startpos[0], planning.startpos[1], 'ro')
@@ -202,9 +217,10 @@ if __name__ == '__main__':
         if planning.goal_reached(new_node):
             print('goal reached')
             path = planning.backtarce(new_node)
-            break
+            #break
 
         planning.rewire(new_node)
+        planning.update_neighbors(new_node)
 
         print(new_node.pos)
         # plt.plot(new_node.pos[0], new_node.pos[1], 'bo')
@@ -221,7 +237,7 @@ if __name__ == '__main__':
     # draw the edges
     if len(planning.G.edges) > 0:
         for edge in planning.G.edges:
-            plt.plot([edge[0].pos[0], edge[1].pos[0]], [edge[0].pos[1], edge[1].pos[1]], 'b-')
+            plt.plot([edge[0].pos[0], edge[1].pos[0]], [edge[0].pos[1], edge[1].pos[1]], 'b-', linewidth=0.5)
 
     plt.plot(planning.startpos[0], planning.startpos[1], 'ro')
     plt.plot(planning.endpos[0], planning.endpos[1], 'ro')
@@ -231,7 +247,17 @@ if __name__ == '__main__':
         plt.plot([path[i].pos[0], path[i+1].pos[0]], [path[i].pos[1], path[i+1].pos[1]], 'r-', linewidth=2)
 
 
-    plt.show()
+    real = []
+    for waypoint in path:
+
+        print(Util.convert_to_real_coord(waypoint.pos))
+
+    print(real.reverse())
+
+
+    # plt range
+    # plt.xlim(140, 254)
+    # plt.ylim(130, 234)
     plt.show()
 
 
