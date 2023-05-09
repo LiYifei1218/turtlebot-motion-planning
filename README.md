@@ -1,6 +1,7 @@
 # turtlebot-motion-planning
 
-## ESE 497 Experimental validation of robot planning and control algorithms on ground robot platforms
+## ESE 497
+## Experimental validation of robot planning and control algorithms on ground robot platforms
 
 The project will involve the following steps:
 
